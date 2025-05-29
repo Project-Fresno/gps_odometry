@@ -5,7 +5,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import NavSatFix
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Pose
-from geometry_msgs.msg import QuaternionStamped
+from geometry_msgs.msg import Quaternion
 
 import math
 import utm
@@ -20,7 +20,7 @@ class GPS_TO_ODOM(Node):
             NavSatFix, "/gnss", self.gnss_callback, 10
         )
         self.imu_subscriber = self.create_subscription(
-            QuaternionStamped, "/global/heading", self.imu_callback, 10
+            Quaternion, "/global/heading", self.imu_callback, 10
         )
 
         self.odom_publisher = self.create_publisher(Odometry, "/odometry/gps", 10)
@@ -96,11 +96,11 @@ class GPS_TO_ODOM(Node):
             odom.header.frame_id = "odom"
             self.odom_publisher.publish(odom)
 
-    def imu_callback(self, orientation):
-        w = orientation.quaternion.w
-        x = orientation.quaternion.x
-        y = orientation.quaternion.y
-        z = orientation.quaternion.z
+    def imu_callback(self, quaternion):
+        w = quaternion.w
+        x = quaternion.x
+        y = quaternion.y
+        z = quaternion.z
         siny_cosp = 2 * (w * z + x * y)
         cosy_cosp = w * w + x * x - y * y - z * z
 
