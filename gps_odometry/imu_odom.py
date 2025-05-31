@@ -64,14 +64,18 @@ class IMU_ODOM(Node):
         roll, pitch, yaw_east = euler_from_quaternion([Q.x, Q.y, Q.z, Q.w])
         current_heading = yaw_east  # Keep east-based heading as is
 
-        # Calculate relative heading
-        theta = current_heading - self.origin_heading
-
         # Transform from UTM (east/north) to robot local frame (x/y) in east-based frame
         # In east-based frame: 0° = east, 90° = north
         # Robot frame: x = forward (in direction of heading), y = left
-        del_x = del_easting * cos(theta) + del_northing * sin(theta)
-        del_y = -del_easting * sin(theta) + del_northing * cos(theta)
+        del_x = del_easting * cos(self.origin_heading) + del_northing * sin(
+            self.origin_heading
+        )
+        del_y = -del_easting * sin(self.origin_heading) + del_northing * cos(
+            self.origin_heading
+        )
+
+        # Calculate relative heading
+        theta = current_heading - self.origin_heading
 
         # Create quaternion for relative orientation
         x, y, z, w = quaternion_from_euler(0, 0, theta)
