@@ -20,7 +20,7 @@ class GPS_TO_ODOM(Node):
             NavSatFix, "/gnss", self.gnss_callback, 10
         )
         self.imu_subscriber = self.create_subscription(
-            Quaternion, "/global/heading", self.imu_callback, 10
+            Quaternion, "/filter/quaternion", self.imu_callback, 10
         )
 
         self.odom_publisher = self.create_publisher(Odometry, "/odometry/gps", 10)
